@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OKCAR | Home</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <script src="./js/main.js" type="module"></script>
+  </head>
+  <body>
+    <header class="divider" id="main-header"></header>
+    <main class="divider">
+      <div class="hero">
+        <img
+          src="/images/hero_img.avif"
+          srcset="images/hero_img.avif 500w, images/hero_img_large.png 1000w"
+          alt="image of ferrari sf90"
+        />
+        <div class="logo logo--square">
+          <img src="/images/okcar_logo.jpg" alt="tent image for logo" />
+          <div>OK<span class="highlight">CAR</span></div>
+        </div>
+      </div>
+      <section class="products">
+        <ul class="product-categories">
+          <li>
+            <a href="/service_page/?service=lookup">
+              <img src="/images/car_lookup.png" alt="Tents" />
+              <h4>CAR LOOKUP</h4>
+            </a>
+          </li>
+          <li>
+            <a href="service_page/?service=carshop">
+              <img src="/images/car_shop.png" alt="Backpacks" />
+              <h4>CARSHOP</h4>
+            </a>
+          </li>
+          <li>
+            <a href="service_page/?service=calculator">
+              <img src="/images/car_calculator.png" alt="Hammocks" />
+              <h4>CALCULATOR</h4>
+            </a>
+          </li>
+        </ul>
+      </section>
+      <section class="mission">
+        <h2>Get in Touch</h2>
+        <p>
+          Whether you're buying, selling, or just have questions—drop us a
+          message!
+        </p>
+        <form action="/submit-message" method="POST" class="contact-form">
+          <label for="name">Name:</label>
+          <input type="text" id="name" name="name" required />
+
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required />
+
+          <label for="message">Your Message:</label>
+          <textarea id="message" name="message" rows="4" required></textarea>
+
+          <button type="submit">Send Message</button>
+        </form>
+      </section>
+    </main>
+    <footer id="main-footer"></footer>
+  </body>
+</html>
