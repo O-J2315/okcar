@@ -323,6 +323,106 @@ button {
   font-size: 1rem;
 }
 
+.service-detail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+}
+
+.service-detail img {
+  width: 100%;
+  max-width: 300px;
+}
+
+.service-description {
+  max-width: 600px;
+  text-align: center;
+}
+
+.vin-results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center; /* Optional: centers rows */
+  padding: 1rem;
+}
+
+#vin {
+  text-transform: uppercase;
+}
+
+.info {
+  font-size: var(--small-font);
+  border: 1px solid var(--light-grey);
+  padding: 0.5em;
+  border-radius: 8px;
+  box-sizing: border-box;
+  width: calc(50% - 1rem); /* 2 cards per row with gap */
+  height: 300px; /* Fixed height for uniformity */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+.vin-lookup-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 80%;
+  max-width: 500px;
+  margin: 0 auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: solid 1px var(--light-grey);
+}
+
+.vin-lookup-form label {
+  font-weight: bold;
+  margin: 1rem;
+}
+
+.vin-lookup-form input {
+  padding: 0.75rem;
+  font-size: var(--font-base);
+  border: 1px solid var(--light-grey);
+  border-radius: 8px;
+  background-color: #fff;
+  color: var(--tertiary-color);
+}
+
+.vin-lookup-form input:focus {
+  outline: 2px solid var(--primary-color);
+  border-color: var(--primary-color);
+}
+.vin-lookup-form button {
+  padding: 0.75rem;
+  background-color:rgb(198, 29, 29);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: var(--font-base);
+  transition: background-color 0.3s ease;
+  margin: 1rem;
+}
+
+.vin-lookup-form button:hover {
+  background-color: var(--secondary-color);
+}
+
+.info p {
+  margin: 0.1rem;
+}
+
+.info h3 {
+  margin: 0.5rem 0;
+  color: var(--primary-color);
+}
+
 @media screen and (min-width: 500px) {
   body {
     max-width: 1080px;

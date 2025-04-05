@@ -4,21 +4,21 @@
       "id": "lookup",
       "name": "Car Lookup",
       "description": "Enter a license plate or VIN to instantly get vehicle history, specs, and current value.",
-      "icon": "/images/category-tents.svg",
+      "icon": "/images/car_lookup.png",
       "link": "/product_listing/?category=tents"
     },
     {
       "id": "carshop",
       "name": "Carshop Finder",
       "description": "Find reliable local car dealerships and shops near you with trusted ratings.",
-      "icon": "/images/category-backpacks.svg",
+      "icon": "/images/car_shop.png",
       "link": "/product_listing/?category=backpacks"
     },
     {
       "id": "calculator",
       "name": "Deal Calculator",
       "description": "Quickly estimate your car’s resale value and total cost of ownership.",
-      "icon": "/images/category-hammocks.svg",
+      "icon": "/images/car_calculator.png",
       "link": "/product_listing/?category=hammocks"
     }
   ]

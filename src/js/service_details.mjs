@@ -1,4 +1,4 @@
-import { getLocalStorage, setLocalStorage } from "./utils.mjs";
+import { getLocalStorage, setLocalStorage, renderCarLookupForm, renderCarShopFinderForm} from "./utils.mjs";
 
 export default class ServiceDetails {
   constructor(ServiceId, dataSource) {
@@ -14,6 +14,8 @@ export default class ServiceDetails {
 
     this.renderServiceDetails("main");
 
+    this.loadServiceAPI();
+
   }
   
   renderServiceDetails(selector) {
@@ -23,12 +25,31 @@ export default class ServiceDetails {
     const element = document.querySelector(selector);
     element.innerHTML = `
       <section class="service-detail">
-        <h3>${this.service.name}</h3>
-        <img id="serviceImage" class="divider" src="${this.service.icon}" 
+        <img id="serviceImage" class="service-img" src="${this.service.icon}" 
              alt="${this.service.name}" loading="lazy" />
+        <h3>${this.service.name}</h3>
+        
         <p class="service-description">${this.service.description}</p>
-        <a href="${this.service.link}" class="service-link">Learn More</a>
-      </section>`;
+      </section>
+      
+      <div class="service-api">
+        
+        
+      </div>`;
+  }
+
+  loadServiceAPI() {
+    const apiContainer = document.querySelector(".service-api");
+
+    if (this.serviceId === "lookup") {
+      apiContainer.appendChild(renderCarLookupForm());
+    }else if (this.serviceId === "carshop") {
+      apiContainer.appendChild(renderCarShopFinderForm());
+    } else if (this.serviceId === "services") {
+      apiContainer.innerHTML = `<p class="error">This service is not available yet.</p>`;
+    } else {
+      apiContainer.innerHTML = `<p class="error">Invalid service ID.</p>`;
+    }
   }
 }
 

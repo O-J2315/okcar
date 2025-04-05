@@ -2,8 +2,6 @@
 export function qs(selector, parent = document) {
   return parent.querySelector(selector);
 }
-// or a more concise version if you are into that sort of thing:
-// export const qs = (selector, parent = document) => parent.querySelector(selector);
 
 // retrieve data from localstorage
 export function getLocalStorage(key) {
@@ -46,15 +44,6 @@ export function handleCartChange(cartQuantityElement = document.getElementById("
   }
 }
 
-export function renderListWithTemplate(templateFn, parentElement, list, position = "afterbegin", clear = false) {
-  if (clear) {
-    parentElement.innerHTML = "";
-  }
-
-  const htmlCards = list.map(templateFn);
-  parentElement.insertAdjacentHTML(position, htmlCards.join(""));
-}
-
 export function renderWithTemplate(template, parentElement, data, callback) {
   parentElement.innerHTML = template;
   if (callback) {
@@ -76,44 +65,6 @@ export async function loadHeaderFooter() {
   const footerElement = document.getElementById("main-footer");
   const footerPartial = await loadTemplate("../public/partials/footer.html");
   renderWithTemplate(footerPartial, footerElement);
-}
-
-export function calculateDiscount(finalPrice, suggestedRetailPrice) {
-  const hasDiscount = finalPrice < suggestedRetailPrice;
-  const discountAmount = hasDiscount ? (suggestedRetailPrice - finalPrice).toFixed(2) : 0;
-  const discountPercent = hasDiscount ? Math.round((discountAmount / suggestedRetailPrice) * 100) : 0;
-
-  return { hasDiscount, discountAmount, discountPercent };
-}
-
-export function generateDiscountTag(finalPrice, suggestedRetailPrice) {
-  const { hasDiscount, discountAmount, discountPercent } = calculateDiscount(finalPrice, suggestedRetailPrice);
-
-  return hasDiscount
-    ? `<p class="product__discount">Save $${discountAmount} (${discountPercent}% OFF)</p>`
-    : "";
-}
-
-export function cartTotalReducerFunction(total, item) {
-  return total + (item.FinalPrice * item.Quantity);
-}
-
-function animateCartIcon() {
-  const cartIcon = document.querySelector("#cart-icon");
-
-  if (cartIcon) {
-    // Remove the class before re-adding it to restart the animation
-    cartIcon.classList.remove("cart-icon-shake");
-
-    // Re-add the animation class to restart the animation
-    void cartIcon.offsetWidth; // Trigger reflow to ensure animation restarts
-    cartIcon.classList.add("cart-icon-shake");
-    
-    // Remove the class after the animation ends
-    cartIcon.addEventListener("animationend", () => {
-      cartIcon.classList.remove("cart-icon-shake");
-    });
-  }
 }
 
 // Function to send alerts to the user
@@ -141,3 +92,150 @@ export function removeAllAlerts() {
   const alerts = document.querySelectorAll(".alert");
   alerts.forEach((alert) => document.querySelector("main").removeChild(alert));
 }
+
+
+async function lookupCarByVin(vin, resultContainer) {
+  try {
+    const response = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/${vin}?format=json`);
+    const data = await response.json();
+    const carInfo = data.Results[0];
+
+    if (
+      carInfo.ErrorText &&
+      carInfo.ErrorText !== "0 - VIN decoded clean. Check Digit (9th position) is correct"
+    ) {
+      resultContainer.innerHTML = `<p class="error">Error: ${carInfo.ErrorText}</p>`;
+      return;
+    }
+
+    const safe = (val) => val && val !== "Not Applicable" ? val : "N/A";
+
+    resultContainer.innerHTML = `
+      <div class="info">
+      <h3>Vehicle Information</h3>
+      <p><strong>Make:</strong> ${safe(carInfo.Make)}</p>
+      <p><strong>Model:</strong> ${safe(carInfo.Model)}</p>
+      <p><strong>Year:</strong> ${safe(carInfo.ModelYear)}</p>
+      <p><strong>Body Style:</strong> ${safe(carInfo.BodyClass)}</p>
+      <p><strong>Drive Type:</strong> ${safe(carInfo.DriveType)}</p>
+      <p><strong>Engine:</strong> ${safe(carInfo.EngineConfiguration)} | ${safe(carInfo.EngineCylinders)} Cylinders | ${safe(carInfo.DisplacementL)}L | ${safe(carInfo.EngineHP)} HP</p>
+      <p><strong>Transmission:</strong> ${safe(carInfo.TransmissionStyle)} (${safe(carInfo.TransmissionSpeeds)} speeds)</p>
+      <p><strong>Fuel Type:</strong> ${safe(carInfo.FuelTypePrimary)}</p>
+      </div>
+
+      <div class="info">
+      <h3>Safety & Features</h3>
+      <p><strong>ABS:</strong> ${safe(carInfo.ABS)}</p>
+      <p><strong>ESC:</strong> ${safe(carInfo.ESC)}</p>
+      <p><strong>Traction Control:</strong> ${safe(carInfo.TractionControl)}</p>
+      <p><strong>Blind Spot Monitoring:</strong> ${safe(carInfo.BlindSpotMon)}</p>
+      <p><strong>Rear Visibility System:</strong> ${safe(carInfo.RearVisibilitySystem)}</p>
+      </div>
+
+      <div class="info">
+      <h3>Capacity & Build</h3>
+      <p><strong>GVWR:</strong> ${safe(carInfo.GVWR)}</p>
+      <p><strong>Seats:</strong> ${safe(carInfo.Seats)} (${safe(carInfo.SeatRows)} rows)</p>
+      <p><strong>Doors:</strong> ${safe(carInfo.Doors)}</p>
+      <p><strong>Wheelbase:</strong> Short: ${safe(carInfo.WheelBaseShort)} in | Long: ${safe(carInfo.WheelBaseLong)} in</p>
+      <p><strong>Plant:</strong> ${safe(carInfo.PlantCity)}, ${safe(carInfo.PlantState)}, ${safe(carInfo.PlantCountry)}</p>
+      </div>
+
+      <div class="info">
+      <h3>Extra Info</h3>
+      <p><strong>Entertainment System:</strong> ${safe(carInfo.EntertainmentSystem)}</p>
+      <p><strong>TPMS:</strong> ${safe(carInfo.TPMS)}</p>
+      <p><strong>Steering:</strong> ${safe(carInfo.SteeringLocation)}</p>
+      <p><strong>VIN:</strong> ${safe(carInfo.VIN).toUpperCase()}</p>
+      </div>
+    `;
+  } catch (err) {
+    resultContainer.innerHTML = `<p class="error">Something went wrong. Please try again later.</p>`;
+    console.error("VIN Lookup Error:", err);
+  }
+}
+
+export function renderCarLookupForm() {
+  const container = document.createElement("div");
+
+  const form = document.createElement("form");
+  form.classList.add("vin-lookup-form");
+  form.innerHTML = `
+    <label for="vin">Enter VIN:</label>
+    <input type="text" id="vin" name="vin" required placeholder="1HGCM82633A123456" title="17 characters, no I, O, Q" maxlength="17" minlength="17">
+    <button type="submit">Lookup</button>
+  `;
+
+  const resultContainer = document.createElement("div");
+  resultContainer.id = "vin-results";
+  resultContainer.classList.add("vin-results");
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const vin = event.target.vin.value;
+    resultContainer.innerHTML = "<p>Loading...</p>";
+    await lookupCarByVin(vin, resultContainer);
+  });
+
+  container.appendChild(form);
+  container.appendChild(resultContainer);
+  return container;
+}
+
+
+//fucntions to load car repair shops based on zip code
+
+async function loadCarShops(zipCode) {
+  const apiKey = 'AIzaSyBPe7Qc6vqdXFPEQ31ym0O';  // Use your actual Google API Key
+  const container = document.querySelector(".vin-results");
+
+  const response = await fetch(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=car+repair+shops+in+${zipCode}&key=${apiKey}`);
+  const data = await response.json();
+
+  if (data.results && data.results.length > 0) {
+    const shopLocations = data.results.map(shop => {
+      return `
+        <div class="info">
+          <h3>${shop.name}</h3>
+          <p>${shop.formatted_address}</p>
+        </div>
+      `;
+    }).join("");
+
+    // Generate an iframe with the first shop location (you can enhance this logic to show all shops)
+    const iframe = `
+      <iframe 
+        width="100%" 
+        height="500" 
+        frameborder="0" 
+        src="https://www.google.com/maps/embed/v1/search?key=${apiKey}&q=car+repair+shops+in+${zipCode}">
+      </iframe>
+    `;
+
+    container.innerHTML = `
+      <h3>Repair Shops in ${zipCode}</h3>
+      <div class="vin-results">${shopLocations}</div>
+      <div class="map-container">${iframe}</div>
+    `;
+  } else {
+    container.innerHTML = `<p>No repair shops found in your area.</p>`;
+  }
+}
+
+export function renderCarShopFinderForm() {
+  const form = document.createElement("form");
+  form.innerHTML = `
+    <label for="zip">Enter your Zip Code:</label>
+    <input type="text" id="zip" name="zip" required title="5-digit zip code">
+    <button type="submit">Find Repair Shops</button>
+  `;
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const zip = event.target.zip.value;
+    await loadCarShops(zip);  
+  });
+
+  return form;
+}
+
