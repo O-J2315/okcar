@@ -54,16 +54,17 @@ export function renderWithTemplate(template, parentElement, data, callback) {
 export async function loadTemplate(path) {
   const res = await fetch(path);
   const template = await res.text();
+  console.log(`Loaded template from ${path}`);
   return template;
 }
 
 export async function loadHeaderFooter() {
   const headerElement = document.getElementById("main-header");
-  const headerPartial = await loadTemplate("../public/partials/header.html");
+  const headerPartial = await loadTemplate("/partials/header.html");
   renderWithTemplate(headerPartial, headerElement, undefined);
 
   const footerElement = document.getElementById("main-footer");
-  const footerPartial = await loadTemplate("../public/partials/footer.html");
+  const footerPartial = await loadTemplate("/partials/footer.html");
   renderWithTemplate(footerPartial, footerElement);
 }
 

@@ -1,7 +1,7 @@
 {
-  "name": "outside",
+  "name": "okcar",
   "version": "2.0.0",
-  "description": "Boilerplate for WDD 330 SleepOutside project",
+  "description": "Final Project",
   "main": "main.js",
   "scripts": {
     "start": "vite",
@@ -11,8 +11,8 @@
     "test": "jest",
     "preview": "vite preview"
   },
-  "author": "Shane Thompson",
-  "license": "ISC",
+  "author": "Josue Hernandez",
+  "license": "NL",
   "devDependencies": {
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^8.10.0",

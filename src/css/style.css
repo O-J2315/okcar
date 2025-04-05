@@ -41,6 +41,11 @@ header {
   transition: all 0.3s ease;
 }
 
+.social-links img {
+  width: 30px;
+  height: 30px;
+}
+
 .social-links a:hover {
   transform: scale(1.1);
 }
@@ -192,6 +197,7 @@ button {
   text-align: center;
   margin: 0.5em;
   transition: all 0.3s ease;
+  border-radius: 5px;
 }
 .product-categories li:hover {
   transform: scale(1.05);
@@ -203,8 +209,10 @@ button {
   color: var(--dark-grey);
 }
 .product-categories li a img {
-  height: 7.5rem;
-  width: auto;
+  width: 100%;
+  max-width: 100px;
+  height: auto;
+  max-height: 100px;
 }
 /* Styles for product lists */
 .product-card {
