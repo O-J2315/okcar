@@ -351,9 +351,22 @@ button {
 .vin-results {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  width: 100%;
+  gap: 0.5rem;
   justify-content: center; /* Optional: centers rows */
+}
+
+.results {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
   padding: 1rem;
+  border: 1px solid var(--light-grey);
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  gap: 0.5rem;
 }
 
 #vin {
@@ -366,8 +379,9 @@ button {
   padding: 0.5em;
   border-radius: 8px;
   box-sizing: border-box;
-  width: calc(50% - 1rem); /* 2 cards per row with gap */
-  height: 300px; /* Fixed height for uniformity */
+  height: auto;
+  width: 30%;
+  min-height: 300px; /* Fixed height for uniformity */
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -437,7 +451,6 @@ button {
   align-items: center;
   gap: 1rem;
   width: 80%;
-  max-width: 500px;
   margin: 1rem auto;
   border: solid 1px var(--light-grey);
   padding: 1rem;

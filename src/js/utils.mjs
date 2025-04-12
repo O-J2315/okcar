@@ -138,7 +138,8 @@ function loadCarShops(zipCode) {
 
   service.textSearch(request, (results, status) => {
     if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-      const shopLocations = results.map(shop => `
+      const shopLocations = results.map(shop =>
+        `
         <div class="info">
           <h3>${shop.name}</h3>
           <p>${shop.formatted_address}</p>
@@ -156,7 +157,7 @@ function loadCarShops(zipCode) {
 
       container.innerHTML = `
         <h3>Repair Shops in ${zipCode}</h3>
-        <div class="vin-results">${shopLocations}</div>
+        <div class="results">${shopLocations}</div>
         <div class="map-container">${iframe}</div>
       `;
     } else {
