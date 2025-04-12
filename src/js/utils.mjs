@@ -26,23 +26,7 @@ export function getParam(param) {
   return urlParams.get(param);
 }
 
-export function handleCartChange(cartQuantityElement = document.getElementById("cart-quantity-items")) {
-  const cartItems = getLocalStorage("so-cart");
-  if (cartItems) {
-    const cartQuantity = cartItems.reduce((acc, item) => acc + item.Quantity, 0);
-    cartQuantityElement.innerText = cartQuantity;
 
-    if (cartQuantity > 0) {
-      cartQuantityElement.classList.add("active");
-    } else {
-      cartQuantityElement.classList.remove("active");
-      cartQuantityElement.innerText = "";
-    }
-
-    // Trigger the anitmation
-    animateCartIcon();
-  }
-}
 
 export function renderWithTemplate(template, parentElement, data, callback) {
   parentElement.innerHTML = template;
