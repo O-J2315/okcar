@@ -1,4 +1,4 @@
-import { getLocalStorage, setLocalStorage, renderCarLookupForm, renderCarShopFinderForm} from "./utils.mjs";
+import { getLocalStorage, setLocalStorage, renderCarLookupForm, renderCarShopFinderForm, renderCarCalculatorForm} from "./utils.mjs";
 
 export default class ServiceDetails {
   constructor(ServiceId, dataSource) {
@@ -45,6 +45,8 @@ export default class ServiceDetails {
       apiContainer.appendChild(renderCarLookupForm());
     }else if (this.serviceId === "carshop") {
       apiContainer.appendChild(renderCarShopFinderForm());
+    }else if (this.serviceId === "calculator") {
+      apiContainer.appendChild(renderCarCalculatorForm());
     } else if (this.serviceId === "services") {
       apiContainer.innerHTML = `<p class="error">This service is not available yet.</p>`;
     } else {
