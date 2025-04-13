@@ -79,9 +79,74 @@ export function removeAllAlerts() {
 }
 
 
+async function lookupCarByVin(vin, resultContainer) {
+  try {
+    const response = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/${vin}?format=json`);
+    const data = await response.json();
+    const carInfo = data.Results[0];
+
+    if (
+      carInfo.ErrorText &&
+      carInfo.ErrorText !== "0 - VIN decoded clean. Check Digit (9th position) is correct"
+    ) {
+      resultContainer.innerHTML = `<p class="error">Error: ${carInfo.ErrorText}</p>`;
+      return;
+    }
+
+    const safe = (val) => val && val !== "Not Applicable" ? val : "N/A";
+
+    resultContainer.innerHTML = `
+      <div class="info">
+      <h3>Vehicle Information</h3>
+      <p><strong>Make:</strong> ${safe(carInfo.Make)}</p>
+      <p><strong>Model:</strong> ${safe(carInfo.Model)}</p>
+      <p><strong>Year:</strong> ${safe(carInfo.ModelYear)}</p>
+      <p><strong>Body Style:</strong> ${safe(carInfo.BodyClass)}</p>
+      <p><strong>Drive Type:</strong> ${safe(carInfo.DriveType)}</p>
+      <p><strong>Engine:</strong> ${safe(carInfo.EngineConfiguration)} | ${safe(carInfo.EngineCylinders)} Cylinders | ${safe(carInfo.DisplacementL)}L | ${safe(carInfo.EngineHP)} HP</p>
+      <p><strong>Transmission:</strong> ${safe(carInfo.TransmissionStyle)} (${safe(carInfo.TransmissionSpeeds)} speeds)</p>
+      <p><strong>Fuel Type:</strong> ${safe(carInfo.FuelTypePrimary)}</p>
+      </div>
+      <div class="info">
+      <h3>Safety & Features</h3>
+      <p><strong>ABS:</strong> ${safe(carInfo.ABS)}</p>
+      <p><strong>ESC:</strong> ${safe(carInfo.ESC)}</p>
+      <p><strong>Traction Control:</strong> ${safe(carInfo.TractionControl)}</p>
+      <p><strong>Blind Spot Monitoring:</strong> ${safe(carInfo.BlindSpotMon)}</p>
+      <p><strong>Rear Visibility System:</strong> ${safe(carInfo.RearVisibilitySystem)}</p>
+      </div>
+      <div class="info">
+      <h3>Capacity & Build</h3>
+      <p><strong>GVWR:</strong> ${safe(carInfo.GVWR)}</p>
+      <p><strong>Seats:</strong> ${safe(carInfo.Seats)} (${safe(carInfo.SeatRows)} rows)</p>
+      <p><strong>Doors:</strong> ${safe(carInfo.Doors)}</p>
+      <p><strong>Wheelbase:</strong> Short: ${safe(carInfo.WheelBaseShort)} in | Long: ${safe(carInfo.WheelBaseLong)} in</p>
+      <p><strong>Plant:</strong> ${safe(carInfo.PlantCity)}, ${safe(carInfo.PlantState)}, ${safe(carInfo.PlantCountry)}</p>
+      </div>
+      <div class="info">
+      <h3>Extra Info</h3>
+      <p><strong>Entertainment System:</strong> ${safe(carInfo.EntertainmentSystem)}</p>
+      <p><strong>TPMS:</strong> ${safe(carInfo.TPMS)}</p>
+      <p><strong>Steering:</strong> ${safe(carInfo.SteeringLocation)}</p>
+      <p><strong>VIN:</strong> ${safe(carInfo.VIN).toUpperCase()}</p>
+      </div>
+    `;
+  } catch (err) {
+    resultContainer.innerHTML = `<p class="error">Something went wrong. Please try again later.</p>`;
+    console.error("VIN Lookup Error:", err);
+  }
+}
+
+
  
 export function renderCarLookupForm() {
   const container = document.createElement("div");
+
+  if(localStorage.getItem("last_vin")) {
+    const last_vin = localStorage.getItem("last_vin");
+    const date = localStorage.getItem("last-lookup-date");
+    container.innerHTML = `<p class="locals">Last VIN: <strong>${last_vin}</strong> on ${date}</p>`;
+  }
 
   const form = document.createElement("form");
   form.classList.add("vin-lookup-form");
@@ -100,10 +165,13 @@ export function renderCarLookupForm() {
     const vin = event.target.vin.value;
     resultContainer.innerHTML = "<p>Loading...</p>";
     await lookupCarByVin(vin, resultContainer);
+    setLocalStorage("last-lookup-date", new Date().toISOString().split("T")[0]);
+    setLocalStorage("last_vin", vin);
   });
 
   container.appendChild(form);
   container.appendChild(resultContainer);
+
   return container;
 }
 
@@ -151,6 +219,17 @@ function loadCarShops(zipCode) {
 }
 
 export function renderCarShopFinderForm() {
+  const container = document.createElement("div");
+
+  if(localStorage.getItem("last_zip")) {
+    console.log("last_zip", localStorage.getItem("last_zip"));
+    const last_zip = localStorage.getItem("last_zip");
+    const date = localStorage.getItem("last-carshop-date");
+    container.innerHTML = `<p class="locals">Last Zip: <strong>${last_zip}</strong> on ${date}</p>`;
+    document.querySelector(".service-api").appendChild(container);
+  }
+
+
   const form = document.createElement("form");
   form.innerHTML = `
     <label for="zip">Enter your Zip Code:</label>
@@ -164,6 +243,8 @@ export function renderCarShopFinderForm() {
     event.preventDefault();
     const zip = event.target.zip.value;
     await loadCarShops(zip);  
+    setLocalStorage("last-carshop-date", new Date().toISOString().split("T")[0]);
+    setLocalStorage("last_zip", zip);
   });
 
   const resultContainer = document.createElement("div");
@@ -179,6 +260,31 @@ export function renderCarShopFinderForm() {
 //Functions to load car value calculator based on vin, mileage, zip code, and costs
 
 export function renderCarCalculatorForm() {
+  const container = document.createElement("div");
+
+  if(localStorage.getItem("last_zip")) {
+    console.log("last_zip", localStorage.getItem("last_zip"));
+    const last_zip = localStorage.getItem("last_zip");
+    const date = localStorage.getItem("last-carshop-date");
+    container.innerHTML += `<p class="locals">Last Zip: <strong>${last_zip}</strong></p>`;
+  }
+
+  if(localStorage.getItem("last_vin")) {
+    const last_vin = localStorage.getItem("last_vin");
+    const date = localStorage.getItem("last-lookup-date");
+    container.innerHTML += `<p class="locals">Last VIN: <strong>${last_vin}</strong></p>`;
+  }
+
+  if(localStorage.getItem("last-calculator-date")) {
+    const last_calculator_date = localStorage.getItem("last-calculator-date");
+    container.innerHTML += `<p class="locals">Last Calculation: <strong>${last_calculator_date}</strong></p>`;
+  }
+
+
+  document.querySelector(".service-api").appendChild(container);
+
+
+
   const form = document.createElement("form");
   form.classList.add("car-calculator-form");
 
@@ -245,6 +351,7 @@ export function renderCarCalculatorForm() {
       // Call the AI function
       resultContainer.innerHTML = `<p>Generating estimate with AI...</p>`;
       await estimateCarValueWithAI(carInfo, userCosts, resultContainer);
+      setLocalStorage("last-calculator-date", new Date().toISOString().split("T")[0]);
 
     } catch (err) {
       console.error("Error during estimation:", err);

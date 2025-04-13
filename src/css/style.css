@@ -397,7 +397,7 @@ button {
   gap: 1rem;
   width: 80%;
   max-width: 500px;
-  margin: 0 auto;
+  margin: 1rem auto;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border: solid 1px var(--light-grey);
 }
@@ -443,6 +443,18 @@ button {
 .info h3 {
   margin: 0.5rem 0;
   color: var(--primary-color);
+}
+
+.locals {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: left;
+  gap: 1rem;
+  width: auto;
+  max-width: 80%;
+  margin: 1rem auto;
+  color: var(--secondary-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .car-shop-finder-form {

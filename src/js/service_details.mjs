@@ -43,10 +43,15 @@ export default class ServiceDetails {
 
     if (this.serviceId === "lookup") {
       apiContainer.appendChild(renderCarLookupForm());
+
     }else if (this.serviceId === "carshop") {
       apiContainer.appendChild(renderCarShopFinderForm());
+
     }else if (this.serviceId === "calculator") {
       apiContainer.appendChild(renderCarCalculatorForm());
+      const today = new Date();
+      const date = today.toISOString().split("T")[0];
+      setLocalStorage("last-calculator-date", date);
     } else if (this.serviceId === "services") {
       apiContainer.innerHTML = `<p class="error">This service is not available yet.</p>`;
     } else {
